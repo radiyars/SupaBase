@@ -1,0 +1,18 @@
+.root {
+  &__names,
+  &__row {
+    display: flex;
+  }
+
+  &__name,
+  &__item {
+    margin: 0 10px;
+    width: 100px;
+    flex-grow: 1;
+  }
+
+  &__name:first-child,
+  &__item:first-child {
+    width: 20px;
+  }
+}

@@ -1,0 +1,11 @@
+.root {
+  padding: 5px;
+  background-color: lightblue;
+  border: 1px solid white;
+  border-radius: 7px;
+
+  &:hover {
+    cursor: pointer;
+    background-color: lighten(lightblue, 8%);
+  }
+}
