@@ -1,25 +1,35 @@
 import { useState } from "react";
 import { tabelList } from "../../App";
 import supabase from "../../config/supabaseClient";
-import { TablesT, Tables } from "../../types/types";
+import { TablesT, Table } from "../../types/types";
 import styles from "./SidebarItem.module.scss";
+import { setTable } from "../../redux/tableSlice";
+import { useDispatch } from "react-redux";
 
 type SidebarItemProps = {
   tableIndex: number;
-  setTable: (data: Tables<TablesT>) => void;
+  setTableIndex: (index: number) => void;
 };
 
-const SidebarItem: React.FC<SidebarItemProps> = ({ tableIndex, setTable }) => {
+const SidebarItem: React.FC<SidebarItemProps> = ({
+  tableIndex,
+  setTableIndex,
+}) => {
+  const dispatch = useDispatch();
+
   const table = tabelList[tableIndex];
 
   const [fetchError, setFetchError] = useState<string | null>(null);
 
   const fetchTable = async () => {
+    setTableIndex(tableIndex);
+
     console.log(table);
 
     const { data, error } = await supabase.from(table).select();
     if (data) {
-      setTable(data);
+      //   setTable(data);
+      dispatch(setTable(data));
       console.log(data);
       setFetchError(null);
     }

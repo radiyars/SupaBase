@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Main from "./components/Main/Main";
 import Sidebar from "./components/Sidebar/Sidebar";
-import { Tables, TablesT } from "./types/types";
+import { Table, TablesT } from "./types/types";
 
 export const tabelList = ["cars", "dishes", "contacts"] as const;
 
@@ -9,7 +9,9 @@ function App() {
   const [fetchError, setFetchError] = useState<string | null>(null);
 
   const [tableIxdex, setTableIndex] = useState<number>(0);
-  const [table, setTable] = useState<Tables<TablesT>>(null);
+  const [table, setTable] = useState<Table>(null);
+
+  //   const [tableName, setTableName] = useState<string | null>(null);
 
   //   useEffect(() => {
   //     const fetchCars = async () => {
@@ -36,8 +38,12 @@ function App() {
   return (
     <div className="page">
       {fetchError && <p>{fetchError}</p>}
-      <Sidebar tables={tabelList} setTable={setTable} />
-      <Main items={table} />
+      <Sidebar
+        tables={tabelList}
+        setTable={setTable}
+        setTableIndex={setTableIndex}
+      />
+      <Main tableIxdex={tableIxdex} />
     </div>
   );
 }

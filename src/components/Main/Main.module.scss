@@ -1,18 +1,22 @@
 .root {
+  flex-grow: 1;
+
   &__names,
   &__row {
     display: flex;
+    justify-content: space-around;
+    margin: 0 0 10px 0;
   }
 
   &__name,
   &__item {
     margin: 0 10px;
     width: 100px;
-    flex-grow: 1;
+    text-align: center;
   }
 
-  &__name:first-child,
-  &__item:first-child {
-    width: 20px;
-  }
+  //   &__name:first-child,
+  //   &__item:first-child {
+  //     width: 20px;
+  //   }
 }

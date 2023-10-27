@@ -25,6 +25,7 @@ export type Contatc = {
 
 export type Contatcs = Contatc[];
 
+// tanble type
 export type Tables<T> = T extends "cars"
   ? Cars
   : T extends "dishes"
@@ -34,5 +35,7 @@ export type Tables<T> = T extends "cars"
   : null;
 
 export type TablesT = "cars" | "dishes" | "contacts" | null;
+
+export type Table = Tables<TablesT>;
 
 export type TablesList = typeof tabelList;
