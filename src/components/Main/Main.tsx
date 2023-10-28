@@ -2,6 +2,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import RowItem from "../RowItem/RowItem";
 import styles from "./Main.module.scss";
+import RowItemRelation from "../RowItemRelation/RowItemRelation";
 
 type MainProps = {
   tableIxdex: number;
@@ -15,7 +16,7 @@ const Main: React.FC<MainProps> = ({ tableIxdex }) => {
       <h2>Данные таблицы</h2>
       {table && (
         <>
-          {/* Строка с названиями столбцов */}
+          {/* Строка с ключами столбцов */}
           <div className={styles.root__names}>
             {Object.keys(table[0]).map((key, index) => (
               <div key={index} className={styles.root__name}>
@@ -24,17 +25,29 @@ const Main: React.FC<MainProps> = ({ tableIxdex }) => {
             ))}
           </div>
           {/* Строки с данными таблицы */}
-          {table.map((obj) => {
-            const id = obj.id;
+          {table.map((row) => {
+            const id = row.id;
             return (
-              <div key={obj.id} className={styles.root__row}>
-                {Object.entries(obj).map((item, index) => (
-                  <RowItem
-                    key={index}
-                    tableItem={{ key: item[0], value: item[1], id }}
-                    tableIxdex={tableIxdex}
-                  />
-                ))}
+              <div key={id} className={styles.root__row}>
+                {Object.entries(row).map((item, index) => {
+                  if (item[0].includes("_")) {
+                    return (
+                      <RowItemRelation
+                        key={index}
+                        tableItem={{ key: item[0], value: item[1], id }}
+                        tableIxdex={tableIxdex}
+                      />
+                    );
+                  } else {
+                    return (
+                      <RowItem
+                        key={index}
+                        tableItem={{ key: item[0], value: item[1], id }}
+                        tableIxdex={tableIxdex}
+                      />
+                    );
+                  }
+                })}
               </div>
             );
           })}

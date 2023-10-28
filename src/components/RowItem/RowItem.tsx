@@ -1,36 +1,42 @@
 import { ChangeEvent, useEffect, useState } from "react";
-import styles from "./RowItem.module.scss";
-import supabase from "../../config/supabaseClient";
+import { useDispatch } from "react-redux";
 import { tabelList } from "../../App";
-import { TableIitem } from "../../redux/tableSlice";
+import supabase from "../../config/supabaseClient";
+import { setItem } from "../../redux/tableSlice";
+import styles from "./RowItem.module.scss";
+import { TableIitem } from "../../types/types";
 
 type RowItemProps = {
-  //   itemAddress;
   tableItem: TableIitem;
   tableIxdex: number;
 };
 
 const RowItem: React.FC<RowItemProps> = ({ tableItem, tableIxdex }) => {
+  const dispatch = useDispatch();
   const [editMode, setEditMode] = useState(false);
   const [itemValueNew, setItemValueNew] = useState("");
 
-  const handleChange = async (e: ChangeEvent<HTMLInputElement>) => {
-    setEditMode(false);
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (tableItem) {
       // patchNameApi(id, e.target.value);
     }
-    console.log("itemKey:", [tableItem.key]);
 
-    const { data, error } = await supabase
-      .from(tabelList[tableIxdex])
-      .update({ [tableItem.key]: e.target.value })
-      .eq("id", tableItem.id);
+    const updateItem = async () => {
+      const { data, error } = await supabase
+        .from(tabelList[tableIxdex])
+        .update({ [tableItem.key]: e.target.value })
+        .eq("id", tableItem.id)
+        .select();
 
-    if (error) {
-    }
+      if (error) {
+      }
 
-    if (data) {
-    }
+      if (data) {
+        dispatch(setItem({ ...tableItem, value: e.target.value }));
+      }
+    };
+    updateItem();
+    setEditMode(false);
   };
 
   useEffect(() => {

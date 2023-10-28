@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { tabelList } from "../../App";
 import supabase from "../../config/supabaseClient";
-import { TablesT, Table } from "../../types/types";
 import styles from "./SidebarItem.module.scss";
 import { setTable } from "../../redux/tableSlice";
 import { useDispatch } from "react-redux";
@@ -24,19 +23,19 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
   const fetchTable = async () => {
     setTableIndex(tableIndex);
 
-    console.log(table);
+    // console.log(table);
 
-    const { data, error } = await supabase.from(table).select();
+    const { data, error } = await supabase.from(table).select().order("id");
     if (data) {
       //   setTable(data);
       dispatch(setTable(data));
-      console.log(data);
+      //   console.log(data);
       setFetchError(null);
     }
 
     if (error) {
       setFetchError("could not fetch the table");
-      console.log(error);
+      //   console.log(error);
     }
   };
 
