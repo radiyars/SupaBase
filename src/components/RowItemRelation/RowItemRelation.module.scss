@@ -1,7 +1,12 @@
 .root {
-  &__item {
-    margin: 0 10px;
-    width: 100px;
-    text-align: center;
+  width: 100px;
+  margin: 0 10px;
+  width: 100px;
+  width: 100px;
+  text-align: center;
+
+  select {
+    font-size: 16px;
+    width: 40px;
   }
 }

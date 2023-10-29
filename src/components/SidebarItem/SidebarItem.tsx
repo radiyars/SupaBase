@@ -1,47 +1,47 @@
-import { useState } from "react";
-import { tabelList } from "../../App";
+import { useDispatch, useSelector } from "react-redux";
 import supabase from "../../config/supabaseClient";
+import { RootState } from "../../redux/store";
+import { setCurrentTableName, setTable } from "../../redux/tableSlice";
 import styles from "./SidebarItem.module.scss";
-import { setTable } from "../../redux/tableSlice";
-import { useDispatch } from "react-redux";
 
 type SidebarItemProps = {
   tableIndex: number;
-  setTableIndex: (index: number) => void;
 };
 
-const SidebarItem: React.FC<SidebarItemProps> = ({
-  tableIndex,
-  setTableIndex,
-}) => {
+const SidebarItem: React.FC<SidebarItemProps> = ({ tableIndex }) => {
+  const { tabelList, currentTableName } = useSelector(
+    (state: RootState) => state.table
+  );
   const dispatch = useDispatch();
 
-  const table = tabelList[tableIndex];
-
-  const [fetchError, setFetchError] = useState<string | null>(null);
-
   const fetchTable = async () => {
-    setTableIndex(tableIndex);
+    dispatch(setCurrentTableName(tableIndex));
 
-    // console.log(table);
+    const { data, error } = await supabase
+      .from(tabelList[tableIndex])
+      .select()
+      .order("id");
 
-    const { data, error } = await supabase.from(table).select().order("id");
     if (data) {
-      //   setTable(data);
       dispatch(setTable(data));
-      //   console.log(data);
-      setFetchError(null);
+      //   setFetchError(null);
     }
 
     if (error) {
-      setFetchError("could not fetch the table");
-      //   console.log(error);
+      //   setFetchError("could not fetch the table");
     }
   };
+  let a = tabelList[tableIndex] === currentTableName ? styles.root__active : "";
+  console.log(a);
 
   return (
-    <div className={styles.root} onClick={fetchTable}>
-      {table}
+    <div
+      className={`${styles.root} ${
+        tabelList[tableIndex] === currentTableName ? styles.root__active : ""
+      }`}
+      onClick={fetchTable}
+    >
+      {tabelList[tableIndex]}
     </div>
   );
 };

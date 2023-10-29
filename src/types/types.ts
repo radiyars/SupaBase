@@ -1,5 +1,3 @@
-import { tabelList } from "../App";
-
 export type Car = {
   id: number;
   mark: string;
@@ -42,34 +40,9 @@ export type Passports = Passport[];
 // ------------------------------------
 export type Row = Car | Dish | Contatc | User | Passport;
 
-export type Tables2 = Cars | Dishes | Contatcs | Users | Passports | null;
+export type Tables = Cars | Dishes | Contatcs | Users | Passports | null;
 
-// !tanble type
-// export type Tables<T> = T extends "cars"
-//   ? Cars
-//   : T extends "dishes"
-//   ? Dishes
-//   : T extends "contacts"
-//   ? Contatcs
-//   : T extends "user"
-//   ? Users
-//   : T extends "passport"
-//   ? Passports
-//   : null;
-
-// export type TablesT =
-//   | "cars"
-//   | "dishes"
-//   | "contacts"
-//   | "user"
-//   | "passport"
-//   | null;
-
-// let a: Tables<TablesList[2]>;
-// export type Table = Tables<TablesT>;
-// !!
-export type TablesList = typeof tabelList;
-
+// ------------------------------------
 // данные одного элемента таблицы
 export type TableIitem = {
   id: number; // id строки в которой находится элемент

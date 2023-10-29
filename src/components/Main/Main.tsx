@@ -4,11 +4,9 @@ import RowItem from "../RowItem/RowItem";
 import styles from "./Main.module.scss";
 import RowItemRelation from "../RowItemRelation/RowItemRelation";
 
-type MainProps = {
-  tableIxdex: number;
-};
+type MainProps = {};
 
-const Main: React.FC<MainProps> = ({ tableIxdex }) => {
+const Main: React.FC<MainProps> = ({}) => {
   const { table } = useSelector((state: RootState) => state.table);
 
   return (
@@ -31,19 +29,19 @@ const Main: React.FC<MainProps> = ({ tableIxdex }) => {
               <div key={id} className={styles.root__row}>
                 {Object.entries(row).map((item, index) => {
                   if (item[0].includes("_")) {
+                    // если есть нижнее подчеркивание значит это связывающая ссылка :)
                     return (
                       <RowItemRelation
                         key={index}
                         tableItem={{ key: item[0], value: item[1], id }}
-                        tableIxdex={tableIxdex}
                       />
                     );
                   } else {
+                    // если нет нижнего подчеркивания - значит это стандартные данные :)
                     return (
                       <RowItem
                         key={index}
                         tableItem={{ key: item[0], value: item[1], id }}
-                        tableIxdex={tableIxdex}
                       />
                     );
                   }

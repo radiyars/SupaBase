@@ -1,28 +1,24 @@
 import { ChangeEvent, useEffect, useState } from "react";
-import { tabelList } from "../../App";
+import { useSelector } from "react-redux";
 import supabase from "../../config/supabaseClient";
+import { RootState } from "../../redux/store";
 import { TableIitem } from "../../types/types";
 import { getRelationTableInfo } from "../../utils/getRelationTableInfo";
 import styles from "./RowItemRelation.module.scss";
 
 type RowItemRelationProps = {
   tableItem: TableIitem;
-  tableIxdex: number;
 };
 
-const RowItemRelation: React.FC<RowItemRelationProps> = ({
-  tableItem,
-  tableIxdex,
-}) => {
+const RowItemRelation: React.FC<RowItemRelationProps> = ({ tableItem }) => {
+  const { currentTableName } = useSelector((state: RootState) => state.table);
   const [itemValueNew, setItemValueNew] = useState("");
   const [valuesColumn, setValuesColumn] = useState<string[] | null>(null);
-
-  const RelationTableInfo = getRelationTableInfo(tableItem.key);
 
   const handleChange = (e: ChangeEvent<HTMLSelectElement>) => {
     const updateItem = async () => {
       const { data, error } = await supabase
-        .from(tabelList[tableIxdex])
+        .from(currentTableName)
         .update({ [tableItem.key]: e.target.value })
         .eq("id", tableItem.id)
         .select();
@@ -42,7 +38,9 @@ const RowItemRelation: React.FC<RowItemRelationProps> = ({
     setItemValueNew(String(tableItem.value));
   }, []);
 
-  useEffect(() => {
+  const handleClick = () => {
+    const RelationTableInfo = getRelationTableInfo(tableItem.key);
+
     const fetch = async () => {
       const { data, error } = await supabase
         .from(`${RelationTableInfo.table}`)
@@ -59,11 +57,16 @@ const RowItemRelation: React.FC<RowItemRelationProps> = ({
     };
 
     fetch();
-  }, []);
+  };
 
   return (
     <div className={styles.root}>
-      <select value={itemValueNew} onChange={handleChange}>
+      <select
+        value={itemValueNew}
+        onChange={handleChange}
+        onClick={handleClick}
+      >
+        {!valuesColumn && <option value={itemValueNew}>{itemValueNew}</option>}
         {valuesColumn &&
           valuesColumn.map((item, index) => (
             <option key={index} value={item}>

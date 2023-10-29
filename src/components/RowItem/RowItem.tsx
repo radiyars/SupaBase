@@ -1,17 +1,17 @@
 import { ChangeEvent, useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
-import { tabelList } from "../../App";
+import { useDispatch, useSelector } from "react-redux";
 import supabase from "../../config/supabaseClient";
+import { RootState } from "../../redux/store";
 import { setItem } from "../../redux/tableSlice";
-import styles from "./RowItem.module.scss";
 import { TableIitem } from "../../types/types";
+import styles from "./RowItem.module.scss";
 
 type RowItemProps = {
   tableItem: TableIitem;
-  tableIxdex: number;
 };
 
-const RowItem: React.FC<RowItemProps> = ({ tableItem, tableIxdex }) => {
+const RowItem: React.FC<RowItemProps> = ({ tableItem }) => {
+  const { currentTableName } = useSelector((state: RootState) => state.table);
   const dispatch = useDispatch();
   const [editMode, setEditMode] = useState(false);
   const [itemValueNew, setItemValueNew] = useState("");
@@ -23,7 +23,7 @@ const RowItem: React.FC<RowItemProps> = ({ tableItem, tableIxdex }) => {
 
     const updateItem = async () => {
       const { data, error } = await supabase
-        .from(tabelList[tableIxdex])
+        .from(currentTableName)
         .update({ [tableItem.key]: e.target.value })
         .eq("id", tableItem.id)
         .select();
@@ -46,14 +46,11 @@ const RowItem: React.FC<RowItemProps> = ({ tableItem, tableIxdex }) => {
   return (
     <div className={styles.root}>
       {!editMode && (
-        <span className={styles.root__item} onClick={() => setEditMode(true)}>
-          {tableItem.value}
-        </span>
+        <span onClick={() => setEditMode(true)}>{tableItem.value}</span>
       )}
 
       {editMode && (
         <input
-          className={styles.root__item}
           type="text"
           onChange={(e) => {
             setItemValueNew(e.target.value);
