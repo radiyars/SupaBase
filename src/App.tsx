@@ -1,42 +1,26 @@
-import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useEffect } from "react";
+import { useSelector } from "react-redux";
 import Main from "./components/Main/Main";
 import Sidebar from "./components/Sidebar/Sidebar";
-import supabase from "./config/supabaseClient";
-import { RootState } from "./redux/store";
-import { setTable } from "./redux/tableSlice";
+import { fetchTable } from "./redux/asyncActions";
+import { RootState, useAppDispatch } from "./redux/store";
 
 function App() {
-  const { currentTableName } = useSelector((state: RootState) => state.table);
-  const dispatch = useDispatch();
-
-  const [fetchError, setFetchError] = useState<string | null>(null);
+  const { currentTable, error } = useSelector((state: RootState) => state.table);
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
-    const fetchCars = async () => {
-      const { data, error } = await supabase.from(currentTableName).select();
-
-      if (error) {
-        setFetchError("could not fetch the cars");
-        dispatch(setTable(null));
-      }
-
-      if (data) {
-        // serCars(data);
-        dispatch(setTable(data));
-        setFetchError(null);
-      }
-    };
-
-    fetchCars();
+    dispatch(fetchTable(currentTable));
   }, []);
 
   return (
-    <div className="page">
-      {fetchError && <p>{fetchError}</p>}
-      <Sidebar />
-      <Main />
-    </div>
+    <>
+      <div className="page">
+        <Sidebar />
+        <Main />
+      </div>
+      {error && <div className="error">{error}</div>}
+    </>
   );
 }
 

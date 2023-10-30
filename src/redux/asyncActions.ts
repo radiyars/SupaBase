@@ -1,31 +1,49 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { Tables } from "../types/types";
+import supabase from "../config/supabaseClient";
+import { setError, setItem } from "./tableSlice";
 
-export type FetchItems = {
+export const fetchTable = createAsyncThunk(
+  "table/fetchTableStatus",
+  async (currentTable: string, thunkAPI) => {
+    const { data, error } = await supabase.from(currentTable).select().order("id");
+
+    if (data) {
+      thunkAPI.dispatch(setError(""));
+    }
+
+    if (error) {
+      thunkAPI.dispatch(setError(`Fetching error! ${error.message}`));
+    }
+    return { data, currentTable };
+  }
+);
+
+type FetchItems = {
   currentTable: string;
-  sortProperty: string;
+  key: string;
+  value: string;
+  id: string;
 };
 
-// export const fetchTable = createAsyncThunk<Tables, FetchItems>(
-//   "items/fetchItemsStatus",
-//   async (params) => {
-//     const { currentPage, categoryId, sortProperty, search } = params;
-//     const { data } = await axios.get<Item[]>(
-//       `https://64dc883ce64a8525a0f6a48c.mockapi.io/items?page=${currentPage}&limit=4&
-// 		${categoryId}&sortBy=${sortProperty}&${search}`
-//     );
-//     return data;
-//   }
-// );
+export const updateItem = createAsyncThunk(
+  "table/updateItemStatus",
+  async (params: FetchItems, thunkAPI) => {
+    const { currentTable, key, value, id } = params;
+    const { data, error } = await supabase
+      .from(currentTable)
+      .update({ [key]: value })
+      .eq("id", id)
+      .select();
 
-// export const fetchItems = createAsyncThunk<Item[], FetchItems>(
-//   "items/fetchItemsStatus",
-//   async (params) => {
-//     const { currentPage, categoryId, sortProperty, search } = params;
-//     const { data } = await axios.get<Item[]>(
-//       `https://64dc883ce64a8525a0f6a48c.mockapi.io/items?page=${currentPage}&limit=4&
-// 		  ${categoryId}&sortBy=${sortProperty}&${search}`
-//     );
-//     return data;
-//   }
-// );
+    if (data) {
+      thunkAPI.dispatch(setError(""));
+      thunkAPI.dispatch(setItem({ id: Number(id), key, value }));
+    }
+
+    if (error) {
+      thunkAPI.dispatch(setError(`Fetching error! ${error.message}`));
+    }
+
+    return data;
+  }
+);

@@ -1,3 +1,6 @@
+// берем ключ столбца и разбираем его на отдельные элемены
+// последний элемент - ключ столбца связанной таблицы
+// предпоследний элемент - связанная таблица
 export const getRelationTableInfo = (text: string) => {
   const RelationTableInfo = { table: "", column: "" };
   const textArr = text.split("_");

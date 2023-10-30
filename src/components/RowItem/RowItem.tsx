@@ -1,8 +1,7 @@
-import { ChangeEvent, useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import supabase from "../../config/supabaseClient";
-import { RootState } from "../../redux/store";
-import { setItem } from "../../redux/tableSlice";
+import { ChangeEvent, KeyboardEvent, useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { updateItem } from "../../redux/asyncActions";
+import { RootState, useAppDispatch } from "../../redux/store";
 import { TableIitem } from "../../types/types";
 import styles from "./RowItem.module.scss";
 
@@ -11,53 +10,62 @@ type RowItemProps = {
 };
 
 const RowItem: React.FC<RowItemProps> = ({ tableItem }) => {
-  const { currentTableName } = useSelector((state: RootState) => state.table);
-  const dispatch = useDispatch();
+  const { currentTable } = useSelector((state: RootState) => state.table);
+  const dispatch = useAppDispatch();
   const [editMode, setEditMode] = useState(false);
-  const [itemValueNew, setItemValueNew] = useState("");
+  const [changedItem, setChangedItem] = useState("");
+  //   const [updatedItem, setUpdatedItem] = useState("");
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (tableItem) {
-      // patchNameApi(id, e.target.value);
+  useEffect(() => {
+    setChangedItem(String(tableItem.value));
+  }, [tableItem.value]);
+
+  const handleOnBlur = (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.value) {
+      dispatch(
+        updateItem({
+          currentTable,
+          key: tableItem.key,
+          value: e.target.value,
+          id: String(tableItem.id),
+        })
+      );
     }
-
-    const updateItem = async () => {
-      const { data, error } = await supabase
-        .from(currentTableName)
-        .update({ [tableItem.key]: e.target.value })
-        .eq("id", tableItem.id)
-        .select();
-
-      if (error) {
-      }
-
-      if (data) {
-        dispatch(setItem({ ...tableItem, value: e.target.value }));
-      }
-    };
-    updateItem();
     setEditMode(false);
   };
 
-  useEffect(() => {
-    setItemValueNew(String(tableItem.value));
-  }, [tableItem.value]);
+  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    e.preventDefault();
+    if (e.key === "Enter") {
+      //   setUpdatedItem(changedItem);
+      dispatch(
+        updateItem({
+          currentTable,
+          key: tableItem.key,
+          value: changedItem,
+          id: String(tableItem.id),
+        })
+      );
+    }
+
+    setEditMode(false);
+  };
 
   return (
     <div className={styles.root}>
-      {!editMode && (
-        <span onClick={() => setEditMode(true)}>{tableItem.value}</span>
-      )}
+      {!editMode && <span onClick={() => setEditMode(true)}>{tableItem.value}</span>}
 
       {editMode && (
         <input
           type="text"
           onChange={(e) => {
-            setItemValueNew(e.target.value);
+            setChangedItem(e.target.value);
           }}
-          value={itemValueNew}
-          onBlur={handleChange}
+          value={changedItem}
+          onBlur={handleOnBlur}
+          //   onKeyDown={(e) => something(e) }
           autoFocus
+          onKeyDown={handleKeyDown}
         />
       )}
     </div>

@@ -38,12 +38,7 @@ const Main: React.FC<MainProps> = ({}) => {
                     );
                   } else {
                     // если нет нижнего подчеркивания - значит это стандартные данные :)
-                    return (
-                      <RowItem
-                        key={index}
-                        tableItem={{ key: item[0], value: item[1], id }}
-                      />
-                    );
+                    return <RowItem key={index} tableItem={{ key: item[0], value: item[1], id }} />;
                   }
                 })}
               </div>

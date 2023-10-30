@@ -1,17 +1,30 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { Row, TableIitem, Tables } from "../types/types";
-// import { createApi, fakeBaseQuery } from "@reduxjs/toolkit/react";
+import { fetchTable } from "./asyncActions";
 
 type TableSliceState = {
   table: Tables;
   tabelList: string[];
-  currentTableName: string;
+  currentTable: string;
+  error: string;
 };
 
 export const initialState: TableSliceState = {
   table: null,
-  tabelList: ["cars", "dishes", "contacts", "user", "passport"],
-  currentTableName: "cars",
+  tabelList: [
+    "persons",
+    "passports",
+    "contacts",
+    "addresses",
+    "driverLicenses",
+    "cars",
+    "workplaces",
+    "bankCards",
+    "families",
+    "policies",
+  ],
+  currentTable: "persons",
+  error: "",
 };
 
 export const tableSlice = createSlice({
@@ -40,9 +53,7 @@ export const tableSlice = createSlice({
 
       // в  строке находим элемент с нужным ключом и меняем у его пары значение
       if (row) {
-        const itemRowIndex = row.findIndex(
-          (item) => item[0] === action.payload.key
-        );
+        const itemRowIndex = row.findIndex((item) => item[0] === action.payload.key);
         row[itemRowIndex][1] = action.payload.value;
       }
 
@@ -54,11 +65,27 @@ export const tableSlice = createSlice({
     },
 
     setCurrentTableName(state, action: PayloadAction<number>) {
-      state.currentTableName = state.tabelList[action.payload];
+      state.currentTable = state.tabelList[action.payload];
     },
+
+    setError(state, action: PayloadAction<string>) {
+      state.error = action.payload;
+    },
+  },
+
+  extraReducers: (builder) => {
+    // get table
+    builder.addCase(fetchTable.fulfilled, (state, action) => {
+      state.table = action.payload.data;
+      state.currentTable = action.payload.currentTable;
+    });
+
+    builder.addCase(fetchTable.rejected, (state) => {
+      state.table = null;
+    });
   },
 });
 
-export const { setTable, setItem, setCurrentTableName } = tableSlice.actions;
+export const { setTable, setItem, setCurrentTableName, setError } = tableSlice.actions;
 
 export default tableSlice.reducer;
