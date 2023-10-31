@@ -7,6 +7,7 @@ type TableSliceState = {
   tabelList: string[];
   currentTable: string;
   error: string;
+  isLoading: boolean;
 };
 
 export const initialState: TableSliceState = {
@@ -25,6 +26,7 @@ export const initialState: TableSliceState = {
   ],
   currentTable: "persons",
   error: "",
+  isLoading: false,
 };
 
 export const tableSlice = createSlice({
@@ -40,7 +42,6 @@ export const tableSlice = createSlice({
       let itemTableIndex;
       if (state.table) {
         itemTableIndex = state.table.findIndex((row) => {
-          console.log("row.id: ", row.id);
           return row.id === action.payload.id;
         });
       }
@@ -59,7 +60,6 @@ export const tableSlice = createSlice({
 
       // возвращаем измененную строку
       if (state.table && itemTableIndex !== undefined && row) {
-        console.log("newRow", Object.fromEntries(row) as Row);
         state.table[itemTableIndex] = Object.fromEntries(row) as Row;
       }
     },
@@ -75,13 +75,20 @@ export const tableSlice = createSlice({
 
   extraReducers: (builder) => {
     // get table
+    builder.addCase(fetchTable.pending, (state) => {
+      state.table = null;
+      state.isLoading = true;
+    });
+
     builder.addCase(fetchTable.fulfilled, (state, action) => {
       state.table = action.payload.data;
       state.currentTable = action.payload.currentTable;
+      state.isLoading = false;
     });
 
     builder.addCase(fetchTable.rejected, (state) => {
       state.table = null;
+      state.isLoading = false;
     });
   },
 });

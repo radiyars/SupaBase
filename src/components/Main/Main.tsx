@@ -3,6 +3,7 @@ import { RootState } from "../../redux/store";
 import RowItem from "../RowItem/RowItem";
 import styles from "./Main.module.scss";
 import RowItemRelation from "../RowItemRelation/RowItemRelation";
+import Loader from "../Loader/Loader";
 
 type MainProps = {};
 
@@ -12,6 +13,7 @@ const Main: React.FC<MainProps> = ({}) => {
   return (
     <div className={styles.root}>
       <h2>Данные таблицы</h2>
+      <Loader />
       {table && (
         <>
           {/* Строка с ключами столбцов */}

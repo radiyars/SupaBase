@@ -14,30 +14,13 @@ const RowItem: React.FC<RowItemProps> = ({ tableItem }) => {
   const dispatch = useAppDispatch();
   const [editMode, setEditMode] = useState(false);
   const [changedItem, setChangedItem] = useState("");
-  //   const [updatedItem, setUpdatedItem] = useState("");
 
   useEffect(() => {
     setChangedItem(String(tableItem.value));
   }, [tableItem.value]);
 
-  const handleOnBlur = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.value) {
-      dispatch(
-        updateItem({
-          currentTable,
-          key: tableItem.key,
-          value: e.target.value,
-          id: String(tableItem.id),
-        })
-      );
-    }
-    setEditMode(false);
-  };
-
-  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-    e.preventDefault();
-    if (e.key === "Enter") {
-      //   setUpdatedItem(changedItem);
+  const dispatchChangedItem = (item: string) => {
+    if (item) {
       dispatch(
         updateItem({
           currentTable,
@@ -46,9 +29,18 @@ const RowItem: React.FC<RowItemProps> = ({ tableItem }) => {
           id: String(tableItem.id),
         })
       );
+      setEditMode(false);
     }
+  };
 
-    setEditMode(false);
+  const handleOnBlur = (e: ChangeEvent<HTMLInputElement>) => {
+    dispatchChangedItem(changedItem);
+  };
+
+  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      dispatchChangedItem(changedItem);
+    }
   };
 
   return (
@@ -63,9 +55,8 @@ const RowItem: React.FC<RowItemProps> = ({ tableItem }) => {
           }}
           value={changedItem}
           onBlur={handleOnBlur}
-          //   onKeyDown={(e) => something(e) }
-          autoFocus
           onKeyDown={handleKeyDown}
+          autoFocus
         />
       )}
     </div>
